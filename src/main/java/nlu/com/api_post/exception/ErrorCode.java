@@ -17,6 +17,13 @@ public enum ErrorCode {
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     CANNOT_CREATE_TOKEN(1009, "Cannot create token", HttpStatus.UNAUTHORIZED),
     PATH_NOT_EXISTED(1010, "Path not existed", HttpStatus.NOT_FOUND),
+    TYPE_NOT_EXISTED(1011, "Type not existed", HttpStatus.BAD_REQUEST),
+    TITLE_BLANK(1012, "Title is not blank", HttpStatus.BAD_REQUEST),
+    CONTENT_BLANK(1013, "Content is not blank", HttpStatus.BAD_REQUEST),
+    TYPE_BLANK(1014, "Type is not blank", HttpStatus.BAD_REQUEST),
+    TITLE_INVALID(1015, "Title must be at less {max} characters", HttpStatus.BAD_REQUEST),
+    CONTENT_INVALID(1016, "Content must be at less {max} characters", HttpStatus.BAD_REQUEST),
+
             ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

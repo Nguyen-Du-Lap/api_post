@@ -1,34 +1,24 @@
-package nlu.com.api_post.model.entity;
-
-import jakarta.persistence.*;
+package nlu.com.api_post.model.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import nlu.com.api_post.model.entity.Type;
+import nlu.com.api_post.model.entity.User;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class PostResponse {
     String id;
     String title;
     String content;
     boolean isApprove;
     LocalDate createdDate;
     LocalDate updatedDate;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
     User user;
-
-    @ManyToOne
-    @JoinColumn(name="type_name")
     Type type;
 }
