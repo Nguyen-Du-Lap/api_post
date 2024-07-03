@@ -21,12 +21,15 @@ public class SecurityConfig {
     private static final String[] PUBLIC_ENDPOINTS = {
             "/users", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
-    @Autowired
-    private CustomJwtDecoder customJwtDecoder;
+
+
+    @Autowired CustomJwtDecoder customJwtDecoder;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtAuthenticationConverter getJwtAuthenticationConverter) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                 .anyRequest()
                 .authenticated());
 
@@ -40,6 +43,7 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
+    // Converter authorities
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();

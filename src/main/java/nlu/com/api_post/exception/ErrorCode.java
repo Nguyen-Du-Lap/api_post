@@ -16,6 +16,7 @@ public enum ErrorCode {
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     CANNOT_CREATE_TOKEN(1009, "Cannot create token", HttpStatus.UNAUTHORIZED),
+    PATH_NOT_EXISTED(1010, "Path not existed", HttpStatus.NOT_FOUND),
             ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

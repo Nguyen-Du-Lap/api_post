@@ -20,6 +20,7 @@ public class Post {
     String id;
     String title;
     String content;
+    Boolean isApprove;
     LocalDate createdDate;
     LocalDate updatedDate;
 

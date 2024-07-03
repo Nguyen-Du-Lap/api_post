@@ -10,9 +10,12 @@ import nlu.com.api_post.model.dto.response.RoleResponse;
 import nlu.com.api_post.model.entity.Role;
 import nlu.com.api_post.repository.PermissionRepository;
 import nlu.com.api_post.repository.RoleRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -26,6 +29,7 @@ public class RoleService {
 
     RoleMapper roleMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public RoleResponse create(RoleRequest request) {
         Role role = roleMapper.toEntity(request);
 
@@ -34,5 +38,15 @@ public class RoleService {
 
         roleRepository.save(role);
         return roleMapper.toResponse(role);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<RoleResponse> findAll() {
+        var roles = roleRepository.findAll();
+        return roles.stream().map(roleMapper::toResponse).toList();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(String name) {
+        roleRepository.deleteById(name);
     }
 }
