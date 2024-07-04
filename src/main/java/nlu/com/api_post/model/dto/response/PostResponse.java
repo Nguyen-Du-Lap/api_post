@@ -2,8 +2,6 @@ package nlu.com.api_post.model.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import nlu.com.api_post.model.entity.Type;
-import nlu.com.api_post.model.entity.User;
 
 import java.time.LocalDate;
 

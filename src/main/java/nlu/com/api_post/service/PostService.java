@@ -9,10 +9,8 @@ import nlu.com.api_post.exception.ErrorCode;
 import nlu.com.api_post.mapper.PostMapper;
 import nlu.com.api_post.mapper.TypeMapper;
 import nlu.com.api_post.mapper.UserMapper;
-import nlu.com.api_post.model.dto.request.PostApprovedRequest;
 import nlu.com.api_post.model.dto.request.PostRequest;
 import nlu.com.api_post.model.dto.response.PostResponse;
-import nlu.com.api_post.model.dto.response.UserResponse;
 import nlu.com.api_post.model.entity.Post;
 import nlu.com.api_post.model.entity.Type;
 import nlu.com.api_post.model.entity.User;
@@ -21,7 +19,6 @@ import nlu.com.api_post.repository.TypeRepository;
 import nlu.com.api_post.repository.UserRepository;
 import nlu.com.api_post.util.AuthenticationUtils;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
