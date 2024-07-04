@@ -26,7 +26,7 @@ public enum ErrorCode {
     NAME_BLANK_INVALID(1017, "Name is not blank", HttpStatus.BAD_REQUEST),
     DESCRIPTION_BLANK_INVALID(1018, "Description is not blank", HttpStatus.BAD_REQUEST),
     DATE_INVALID(1019, "Date is not in correct format", HttpStatus.BAD_REQUEST),
-
+    POST_NOT_EXISTED(1020, "Post not existed", HttpStatus.NOT_FOUND),
             ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

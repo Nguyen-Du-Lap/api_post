@@ -19,6 +19,6 @@ public class PostResponse {
     boolean isApprove;
     LocalDate createdDate;
     LocalDate updatedDate;
-    User user;
-    Type type;
+    UserResponse user;
+    TypeResponse type;
 }
