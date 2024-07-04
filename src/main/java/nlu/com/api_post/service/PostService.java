@@ -10,6 +10,7 @@ import nlu.com.api_post.mapper.PostMapper;
 import nlu.com.api_post.mapper.TypeMapper;
 import nlu.com.api_post.mapper.UserMapper;
 import nlu.com.api_post.model.dto.request.PostRequest;
+import nlu.com.api_post.model.dto.response.PageResponse;
 import nlu.com.api_post.model.dto.response.PostResponse;
 import nlu.com.api_post.model.entity.Post;
 import nlu.com.api_post.model.entity.Type;
@@ -18,10 +19,15 @@ import nlu.com.api_post.repository.PostRepository;
 import nlu.com.api_post.repository.TypeRepository;
 import nlu.com.api_post.repository.UserRepository;
 import nlu.com.api_post.util.AuthenticationUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -61,7 +67,7 @@ public class PostService {
     }
 
     @PostAuthorize("returnObject.user.username == authentication.name or hasAuthority('ADMIN')")
-    public PostResponse updatePost(String postId, PostRequest request) {
+    public PostResponse update(String postId, PostRequest request) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_EXISTED));
 
         Type type = typeRepository.findById(request.getType())
@@ -74,6 +80,28 @@ public class PostService {
 
         return  toPostResponse(postRepository.save(post));
 
+    }
+
+    public PageResponse<PostResponse> getAll(String type , int page, int size, String[] sorts) {
+        try {
+           var orders = new ArrayList<Sort.Order>();
+
+
+        }catch (Exception e) {
+
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        var posts = postRepository.findAllByType_Name(type, pageable);
+
+        var postResponse = posts.map(this::toPostResponse).toList();
+
+        return PageResponse.<PostResponse>builder()
+                .content(postResponse)
+                .totalPage(posts.getTotalPages())
+                .totalElement(posts.getTotalElements())
+                .currentPage(posts.getPageable().getPageNumber())
+                .size(posts.getSize())
+                .build();
     }
 
     private PostResponse toPostResponse(Post post) {
