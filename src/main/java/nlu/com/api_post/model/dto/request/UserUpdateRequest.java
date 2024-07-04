@@ -3,6 +3,7 @@ package nlu.com.api_post.model.dto.request;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import nlu.com.api_post.validator.DobConstraint;
 
 import java.time.LocalDate;
 
@@ -16,5 +17,6 @@ public class UserUpdateRequest {
     String password;
     String firstName;
     String lastName;
+    @DobConstraint(min = 11, message = "INVALID_DOB")
     LocalDate dob;
 }

@@ -1,12 +1,15 @@
 package nlu.com.api_post.exception;
 
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
 
 import nlu.com.api_post.model.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 @Slf4j
@@ -95,7 +99,29 @@ public class GlobalExceptionHandler {
         return message;
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException && cause.getCause() instanceof DateTimeParseException) {
+            return handleDateTimeParseException((DateTimeParseException) cause.getCause());
+        }
 
+        log.error("Exception: ", ex);
+        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
+        return ResponseEntity.status(errorCode.getStatusCode()).body(ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build());
+    }
+
+    private ResponseEntity<ApiResponse> handleDateTimeParseException(DateTimeParseException exception) {
+        ErrorCode errorCode = ErrorCode.DATE_INVALID;
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
 
 
 }

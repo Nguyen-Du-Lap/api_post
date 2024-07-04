@@ -18,11 +18,14 @@ public enum ErrorCode {
     CANNOT_CREATE_TOKEN(1009, "Cannot create token", HttpStatus.UNAUTHORIZED),
     PATH_NOT_EXISTED(1010, "Path not existed", HttpStatus.NOT_FOUND),
     TYPE_NOT_EXISTED(1011, "Type not existed", HttpStatus.BAD_REQUEST),
-    TITLE_BLANK(1012, "Title is not blank", HttpStatus.BAD_REQUEST),
-    CONTENT_BLANK(1013, "Content is not blank", HttpStatus.BAD_REQUEST),
-    TYPE_BLANK(1014, "Type is not blank", HttpStatus.BAD_REQUEST),
+    TITLE_BLANK_INVALID(1012, "Title is not blank", HttpStatus.BAD_REQUEST),
+    CONTENT_BLANK_INVALID(1013, "Content is not blank", HttpStatus.BAD_REQUEST),
+    TYPE_BLANK_INVALID(1014, "Type is not blank", HttpStatus.BAD_REQUEST),
     TITLE_INVALID(1015, "Title must be at less {max} characters", HttpStatus.BAD_REQUEST),
     CONTENT_INVALID(1016, "Content must be at less {max} characters", HttpStatus.BAD_REQUEST),
+    NAME_BLANK_INVALID(1017, "Name is not blank", HttpStatus.BAD_REQUEST),
+    DESCRIPTION_BLANK_INVALID(1018, "Description is not blank", HttpStatus.BAD_REQUEST),
+    DATE_INVALID(1019, "Date is not in correct format", HttpStatus.BAD_REQUEST),
 
             ;
 
