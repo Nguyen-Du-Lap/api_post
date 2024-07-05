@@ -23,11 +23,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -82,26 +82,41 @@ public class PostService {
 
     }
 
-    public PageResponse<PostResponse> getAll(String type , int page, int size, String[] sorts) {
+    public PageResponse<PostResponse> getAll(String type , int page, int size, String[] sort) {
         try {
            var orders = new ArrayList<Sort.Order>();
+            if (sort[0].contains(",")) {
+                // will sort more than 2 fields
+                // sortOrder="field, direction"
+                for (String sortOrder : sort) {
+                    String[] sorts = sortOrder.split(",");
+                    orders.add(new Sort.Order(Sort.Direction.fromString(sorts[1]), sorts[0]));
+                }
+            } else {
+                // sort=[field, direction]
+                orders.add(new Sort.Order(Sort.Direction.fromString(sort[1]), sort[0]));
+            }
+            Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+            var posts = postRepository.findAllByType_Name(type, pageable);
 
+            var postResponse = posts.map(this::toPostResponse).toList();
 
+            return PageResponse.<PostResponse>builder()
+                    .content(postResponse)
+                    .totalPage(posts.getTotalPages())
+                    .totalElement(posts.getTotalElements())
+                    .currentPage(posts.getPageable().getPageNumber())
+                    .size(posts.getSize())
+                    .build();
         }catch (Exception e) {
-
+            throw new AppException(ErrorCode.PARAMETER_NOT_CORRECT);
         }
-        Pageable pageable = PageRequest.of(page, size);
-        var posts = postRepository.findAllByType_Name(type, pageable);
 
-        var postResponse = posts.map(this::toPostResponse).toList();
+    }
 
-        return PageResponse.<PostResponse>builder()
-                .content(postResponse)
-                .totalPage(posts.getTotalPages())
-                .totalElement(posts.getTotalElements())
-                .currentPage(posts.getPageable().getPageNumber())
-                .size(posts.getSize())
-                .build();
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(String id) {
+        postRepository.deleteById(id);
     }
 
     private PostResponse toPostResponse(Post post) {

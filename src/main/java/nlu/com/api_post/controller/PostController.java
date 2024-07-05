@@ -9,11 +9,6 @@ import nlu.com.api_post.model.dto.response.ApiResponse;
 import nlu.com.api_post.model.dto.response.PageResponse;
 import nlu.com.api_post.model.dto.response.PostResponse;
 import nlu.com.api_post.service.PostService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,13 +51,21 @@ public class PostController {
             @RequestParam String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
-            @RequestParam(defaultValue = "id,desc") String[] sort)
+            @RequestParam(defaultValue = "createdDate,desc") String[] sort)
 
     {
         var posts = postService.getAll(type, page, size, sort);
         return ApiResponse.<PageResponse<PostResponse>>builder()
                 .result(posts)
                 .message("List post get successfully")
+                .build();
+    }
+
+    @DeleteMapping("/{postId}")
+    ApiResponse<Void> delete(@PathVariable String postId) {
+        postService.delete(postId);
+        return ApiResponse.<Void>builder()
+                .message("Delete post successfully")
                 .build();
     }
 }
