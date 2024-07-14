@@ -52,6 +52,22 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createStaff(UserCreationRequest request) {
+        if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISTED);
+
+        User user = userMapper.toEntity(request);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.STAFF_ROLE).ifPresent(roles::add);
+
+        user.setRoles(roles);
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         log.info("getAllUsers");
         List<User> users = userRepository.findAll();

@@ -9,6 +9,8 @@ import nlu.com.api_post.model.dto.response.ApiResponse;
 import nlu.com.api_post.model.dto.response.PageResponse;
 import nlu.com.api_post.model.dto.response.PostResponse;
 import nlu.com.api_post.service.PostService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PostController {
 
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
     PostService postService;
 
     @PostMapping
@@ -48,7 +51,7 @@ public class PostController {
 
     @GetMapping
     ApiResponse<PageResponse<PostResponse>> getAll(
-            @RequestParam String type,
+            @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size,
             @RequestParam(defaultValue = "createdDate,desc") String[] sort)
@@ -68,4 +71,14 @@ public class PostController {
                 .message("Delete post successfully")
                 .build();
     }
+
+    @PatchMapping("/{postId}")
+    ApiResponse<PostResponse> update(@PathVariable String postId) {
+        var user = postService.update(postId);
+        return ApiResponse.<PostResponse>builder()
+                .result(user)
+                .message("Update post successfully")
+                .build();
+    }
+
 }

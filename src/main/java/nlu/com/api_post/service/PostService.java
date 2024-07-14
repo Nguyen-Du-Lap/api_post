@@ -1,5 +1,6 @@
 package nlu.com.api_post.service;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -62,7 +63,7 @@ public class PostService {
     }
 
     public PostResponse getPost(String id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_EXISTED));
+        Post post = postRepository.findByIdAndIsApprove(id, true).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_EXISTED));
         return toPostResponse(post);
     }
 
@@ -97,7 +98,9 @@ public class PostService {
                 orders.add(new Sort.Order(Sort.Direction.fromString(sort[1]), sort[0]));
             }
             Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-            var posts = postRepository.findAllByType_Name(type, pageable);
+            var posts = StringUtils.isBlank(type)
+                    ? postRepository.findAllByIsApprove(true, pageable)
+                    : postRepository.findAllByType_NameAndIsApprove(type, true, pageable);
 
             var postResponse = posts.map(this::toPostResponse).toList();
 
@@ -109,6 +112,7 @@ public class PostService {
                     .size(posts.getSize())
                     .build();
         }catch (Exception e) {
+            log.error(e.getMessage());
             throw new AppException(ErrorCode.PARAMETER_NOT_CORRECT);
         }
 
@@ -117,6 +121,15 @@ public class PostService {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(String id) {
         postRepository.deleteById(id);
+    }
+
+    @PreAuthorize("hasAuthority('APPROVE_POST') or hasRole('ADMIN')")
+    public PostResponse update(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_EXISTED));
+
+        //update post
+        post.setApprove(true);
+        return  toPostResponse(postRepository.save(post));
     }
 
     private PostResponse toPostResponse(Post post) {

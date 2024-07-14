@@ -1,5 +1,6 @@
 package nlu.com.api_post.controller;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +23,14 @@ import java.util.List;
 public class UserController {
     UserService userService;
 
-    @PostMapping
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
-        UserResponse userResponse = userService.createUser(request);
+    @PostMapping()
+    ApiResponse<UserResponse> createUser(
+            @RequestBody @Valid UserCreationRequest request,
+            @RequestParam(required = false) String role
+    ) {
+        UserResponse userResponse = StringUtils.isBlank(role)
+                ? userService.createUser(request)
+                : userService.createStaff(request);
         return ApiResponse.<UserResponse>builder()
                 .result(userResponse)
                 .message("User created successfully")
